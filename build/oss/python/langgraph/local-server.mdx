@@ -3,9 +3,10 @@ title: Run a local server
 sidebarTitle: Local server
 ---
 
+import AgentTracingPrerequisite from '/snippets/python/langsmith/agent-tracing-prerequisite.mdx';
 
 
-This guide shows you how to run a LangGraph application locally.
+This guide shows you how to run a LangGraph agent locally.
 
 ## Prerequisites
 
@@ -23,16 +24,18 @@ pip install -U "langgraph-cli[inmem]"
 
 ```bash uv
 # Python >= 3.11 is required.
-uv add 'langgraph-cli[inmem]'
+uv add "langgraph-cli[inmem]"
 ```
 </CodeGroup>
 
 
 
 
-## 2. Create a LangGraph app
+<a id="2-create-a-langgraph-app"></a>
 
-Create a new app from the [`new-langgraph-project-python` template](https://github.com/langchain-ai/new-langgraph-project). This template demonstrates a single-node application you can extend with your own logic.
+## 2. Create a LangGraph agent
+
+Create agent code from the [`new-langgraph-project-python` template](https://github.com/langchain-ai/new-langgraph-project). This template demonstrates a single-node graph you can extend with your own logic.
 
 ```shell
 langgraph new path/to/your/app --template new-langgraph-project-python
@@ -67,10 +70,14 @@ uv sync
 
 ## 4. Create a `.env` file
 
+<AgentTracingPrerequisite />
+
 You will find a `.env.example` in the root of your new LangGraph app. Create a `.env` file in the root of your new LangGraph app and copy the contents of the `.env.example` file into it, filling in the necessary API keys:
 
 ```bash
 LANGSMITH_API_KEY=lsv2...
+LANGSMITH_AGENT_ID="<your-agent-id>"
+LANGSMITH_AGENT_ENVIRONMENT="production"
 ```
 
 ## 5. Launch Agent server
@@ -87,20 +94,29 @@ langgraph dev
 Sample output:
 
 ```
->    Ready!
->
->    - API: [http://localhost:2024](http://localhost:2024/)
->
->    - Docs: http://localhost:2024/docs
->
->    - LangGraph Studio Web UI: https://smith.langchain.com/studio/?baseUrl=http://127.0.0.1:2024
+INFO:langgraph_api.cli:
+
+        Welcome to
+
+╦  ┌─┐┌┐┌┌─┐╔═╗┬─┐┌─┐┌─┐┬ ┬
+║  ├─┤││││ ┬║ ╦├┬┘├─┤├─┘├─┤
+╩═╝┴ ┴┘└┘└─┘╚═╝┴└─┴ ┴┴  ┴ ┴
+
+- 🚀 API: http://127.0.0.1:2024
+- 🎨 Studio UI: https://smith.langchain.com/studio/?baseUrl=http://127.0.0.1:2024
+- 📚 API Docs: http://127.0.0.1:2024/docs
+
+This in-memory server is designed for development and testing.
+For production use, please use LangSmith Deployment.
 ```
 
 The `langgraph dev` command starts Agent Server in an in-memory mode. This mode is suitable for development and testing purposes. For production use, deploy Agent Server with access to a persistent storage backend. For more information, see the [Platform setup overview](/langsmith/platform-setup).
 
-## 6. Test your application in Studio
+<a id="6-test-your-application-in-studio"></a>
 
-[Studio](/langsmith/studio) is a specialized UI that you can connect to LangGraph API server to visualize, interact with, and debug your application locally. Test your graph in Studio by visiting the URL provided in the output of the `langgraph dev` command:
+## 6. Test your agent in Studio
+
+[Studio](/langsmith/studio) is a specialized UI that you can connect to LangGraph API server to visualize, interact with, and debug your agent locally. Test your graph in Studio by visiting the URL provided in the output of the `langgraph dev` command:
 
 ```
 >    - LangGraph Studio Web UI: https://smith.langchain.com/studio/?baseUrl=http://127.0.0.1:2024
@@ -209,15 +225,17 @@ https://smith.langchain.com/studio/?baseUrl=http://myhost:3000
 Now that you have a LangGraph app running locally, take your journey further by exploring deployment and advanced features:
 
 * [Deployment quickstart](/langsmith/deployment-quickstart): Deploy your LangGraph app using LangSmith.
-* [LangSmith](/langsmith/home): Learn about foundational LangSmith concepts.
+* [LangSmith](/langsmith/observability): Learn about foundational LangSmith concepts.
 
-* [SDK Reference](https://reference.langchain.com/python/langsmith/deployment/sdk/): Explore the SDK API Reference.
+* [SDK Reference](https://reference.langchain.com/python/langsmith/deployment-sdk): Explore the SDK API Reference.
 
 ---
 
-<Callout icon="pen-to-square" iconType="regular">
-    [Edit the source of this page on GitHub.](https://github.com/langchain-ai/docs/edit/main/src/oss/langgraph/local-server.mdx)
+<div className="source-links">
+<Callout icon="terminal-2">
+    [Connect these docs](/use-these-docs) to your agent of choice via MCP for real-time answers.
 </Callout>
-<Tip icon="terminal" iconType="regular">
-    [Connect these docs programmatically](/use-these-docs) to Claude, VSCode, and more via MCP for real-time answers.
-</Tip>
+<Callout icon="edit">
+    [Edit this page on GitHub](https://github.com/langchain-ai/docs/edit/main/src/oss/langgraph/local-server.mdx) or [file an issue](https://github.com/langchain-ai/docs/issues/new/choose).
+</Callout>
+</div>

@@ -1,5 +1,9 @@
 ---
-title: IBM watsonx.ai
+title: IBM watsonx.ai SQL integration
+description: Integrate with the IBM watsonx.ai SQL tool using LangChain Python.
+integration:
+  name: WatsonxSQLDatabaseToolkit
+  pypi: langchain-ibm
 ---
 
 This example shows how to use `langchain-ibm` `watsonx.ai` SQL Database Toolkit that uses Flight service.
@@ -12,9 +16,9 @@ Building Q&A systems of SQL databases requires executing model-generated SQL que
 
 ### Integration details
 
-| Class | Package | Serializable | [JS support](https://js.langchain.com/docs/integrations/toolkits/ibm/) | Downloads | Version |
+| Class | Package | Serializable | [JS support](/oss/javascript/integrations/tools/ibm) | Downloads | Version |
 | :--- | :--- | :---: | :---: | :---: | :---: |
-| [`WatsonxSQLDatabaseToolkit`](https://reference.langchain.com/python/integrations/langchain_ibm/WatsonxToolkit/) | [`langchain-ibm`](https://reference.langchain.com/python/integrations/langchain_ibm/) | ❌ | ❌ | ![PyPI - Downloads](https://img.shields.io/pypi/dm/langchain-ibm?style=flat-square&label=%20) | ![PyPI - Version](https://img.shields.io/pypi/v/langchain-ibm?style=flat-square&label=%20) |
+| [`WatsonxSQLDatabaseToolkit`](https://reference.langchain.com/python/langchain-ibm/WatsonxToolkit) | [`langchain-ibm`](https://reference.langchain.com/python/langchain-ibm) | ❌ | ❌ | ![PyPI - Downloads](https://img.shields.io/pypi/dm/langchain-ibm?style=flat-square&label=%20) | ![PyPI - Version](https://img.shields.io/pypi/v/langchain-ibm?style=flat-square&label=%20) |
 
 ## Setup
 
@@ -35,7 +39,7 @@ watsonx_api_key = getpass()
 os.environ["WATSONX_APIKEY"] = watsonx_api_key
 ```
 
-Additionaly you are able to pass additional secrets as an environment variable.
+Additionally you are able to pass additional secrets as an environment variable.
 
 ```python
 import os
@@ -110,7 +114,7 @@ Running `.get_tools` method, one can get all available tools as a list.
 wx_sql_toolkit.get_tools()
 ```
 
-```output
+```text
 [QuerySQLDatabaseTool(description="Input to this tool is a detailed and correct SQL query, output is a result from the database. If the query is not correct, an error message will be returned. If an error is returned, rewrite the query, check the query, and try again. If you encounter an issue with Unknown column 'xxxx' in 'field list', use sql_db_schema to query the correct table fields.", db=<langchain_ibm.utilities.sql_database.WatsonxSQLDatabase object at 0x111c03810>),
  InfoSQLDatabaseTool(description='Input to this tool is a comma-separated list of tables, output is the SQL statement with table metadata. Be sure that the tables actually exist by calling sql_db_list_tables first! Example Input: table1, table2, table3', db=<langchain_ibm.utilities.sql_database.WatsonxSQLDatabase object at 0x111c03810>),
  ListSQLDatabaseTool(db=<langchain_ibm.utilities.sql_database.WatsonxSQLDatabase object at 0x111c03810>),
@@ -141,29 +145,29 @@ llm = ChatWatsonx(
 ```
 
 ```python
-from langgraph.prebuilt import create_react_agent
+from langchain.agents import create_agent
 
 # Use one of the prompt from langchain hub
-from langchain import hub
+from langchain_classic import hub
 
 prompt_template = hub.pull("langchain-ai/sql-agent-system-prompt")
 system_message = prompt_template.format(dialect="PostgreSQL", top_k=5)
 
-agent_executor = create_react_agent(llm, wx_sql_toolkit.get_tools(), prompt=system_message, debug=True)
+agent_executor = create_agent(llm, wx_sql_toolkit.get_tools(), system_prompt=system_message)
 ```
 
 ```python
 example_query = "What city has the highest population?"
 
-events = agent.stream(
+stream = agent.stream_events(
     {"messages": [("user", example_query)]},
-    stream_mode="values",
+    version="v3",
 )
-for event in events:
-    event["messages"][-1].pretty_print()
+for snapshot in stream.values:
+    snapshot["messages"][-1].pretty_print()
 ```
 
-```output
+```text
 ================================[1m Human Message [0m=================================
 
 What city has the largest population?
@@ -229,13 +233,15 @@ The city with the largest population is Warsaw.
 
 ## API reference
 
-For detailed documentation of all `WatsonxSQLDatabaseToolkit` features and configurations head to the [API reference](https://reference.langchain.com/python/integrations/langchain_ibm/WatsonxSQLDatabaseToolkit/).
+For detailed documentation of all `WatsonxSQLDatabaseToolkit` features and configurations head to the [API reference](https://reference.langchain.com/python/langchain-ibm/WatsonxSQLDatabaseToolkit).
 
 ---
 
-<Callout icon="pen-to-square" iconType="regular">
-    [Edit the source of this page on GitHub.](https://github.com/langchain-ai/docs/edit/main/src/oss/python/integrations/tools/ibm_watsonx_sql.mdx)
+<div className="source-links">
+<Callout icon="terminal-2">
+    [Connect these docs](/use-these-docs) to your agent of choice via MCP for real-time answers.
 </Callout>
-<Tip icon="terminal" iconType="regular">
-    [Connect these docs programmatically](/use-these-docs) to Claude, VSCode, and more via MCP for real-time answers.
-</Tip>
+<Callout icon="edit">
+    [Edit this page on GitHub](https://github.com/langchain-ai/docs/edit/main/src/oss/python/integrations/tools/ibm_watsonx_sql.mdx) or [file an issue](https://github.com/langchain-ai/docs/issues/new/choose).
+</Callout>
+</div>

@@ -1,6 +1,12 @@
 ---
-title: MCP Toolbox for Databases
+title: Mcp toolbox for databases integration
+description: Integrate with the Mcp toolbox for databases tool using LangChain Python.
+integration:
+  name: Mcp toolbox for databases
+  pypi: toolbox-langchain
 ---
+
+
 
 Integrate your databases with LangChain agents using MCP Toolbox.
 
@@ -8,12 +14,12 @@ Integrate your databases with LangChain agents using MCP Toolbox.
 
 [MCP Toolbox for Databases](https://github.com/googleapis/genai-toolbox) is an open source MCP server for databases. It was designed with enterprise-grade and production-quality in mind. It enables you to develop tools easier, faster, and more securely by handling the complexities such as connection pooling, authentication, and more.
 
-Toolbox Tools can be seemlessly integrated with LangChain applications. For more
+Toolbox Tools can be seamlessly integrated with LangChain applications. For more
 information on [getting
-started](https://googleapis.github.io/genai-toolbox/getting-started/local_quickstart/) or
-[configuring](https://googleapis.github.io/genai-toolbox/getting-started/configure/)
+started](https://mcp-toolbox.dev/documentation/getting-started/local_quickstart/) or
+[configuring](https://mcp-toolbox.dev/documentation/configuration/)
 MCP Toolbox, see the
-[documentation](https://googleapis.github.io/genai-toolbox/getting-started/introduction/).
+[documentation](https://mcp-toolbox.dev/documentation/introduction/).
 
 ![architecture](https://raw.githubusercontent.com/googleapis/genai-toolbox/refs/heads/main/docs/en/getting-started/introduction/architecture.png)
 
@@ -69,7 +75,7 @@ VALUES
 
 You can now exit `psql` by typing `\q`.
 
-### 2. Install MCP Toolbox
+### 2. Install MCP toolbox
 
 Next, we will install MCP Toolbox, define our tools in a `tools.yaml` configuration file, and run the MCP Toolbox server.
 
@@ -152,7 +158,7 @@ with ToolboxClient("http://127.0.0.1:5000") as client:
     print(results)
 ```
 
-```output
+```json
 [{"id":1,"location":"Basel","name":"Hilton Basel","price_tier":"Luxury"},{"id":3,"location":"Basel","name":"Hyatt Regency Basel","price_tier":"Upper Upscale"}]
 ```
 
@@ -164,7 +170,7 @@ Now for the fun part! We'll install the required LangChain packages and create a
 pip install -qU toolbox-langchain langgraph langchain-google-vertexai
 ```
 
-With the packages installed, we can define our agent. We will use `ChatVertexAI` for the model and `ToolboxClient` to load our tools. The [`create_agent`](https://reference.langchain.com/python/langchain/agents/#langchain.agents.create_agent) from `langchain.agents` creates a robust agent that can reason about which tools to call.
+With the packages installed, we can define our agent. We will use `ChatVertexAI` for the model and `ToolboxClient` to load our tools. The [`create_agent`](https://reference.langchain.com/python/langchain/agents/factory/create_agent) from `langchain.agents` creates a robust agent that can reason about which tools to call.
 
 **Note:** Ensure your MCP Toolbox server is running in a separate terminal before executing the code below.
 
@@ -240,29 +246,31 @@ The primary class for this integration is `ToolboxClient`.
 
 For more information, see the following resources:
 
-- [Toolbox Official Documentation](https://googleapis.github.io/genai-toolbox/)
+- [Toolbox Official Documentation](https://mcp-toolbox.dev/)
 - [Toolbox GitHub Repository](https://github.com/googleapis/genai-toolbox)
 - [Toolbox LangChain SDK](https://github.com/googleapis/mcp-toolbox-python-sdk/tree/main/packages/toolbox-langchain)
 
 MCP Toolbox has a variety of features to make developing Gen AI tools for databases seamless:
 
-- [Authenticated Parameters](https://googleapis.github.io/genai-toolbox/resources/tools/#authenticated-parameters): Bind tool inputs to values from OIDC tokens automatically, making it easy to run sensitive queries without potentially leaking data
-- [Authorized Invocations](https://googleapis.github.io/genai-toolbox/resources/tools/#authorized-invocations): Restrict access to use a tool based on the users Auth token
-- [OpenTelemetry](https://googleapis.github.io/genai-toolbox/how-to/export_telemetry/): Get metrics and tracing from MCP Toolbox with [OpenTelemetry](https://opentelemetry.io/docs/)
+- [Authenticated Parameters](https://mcp-toolbox.dev/documentation/configuration/tools/): Bind tool inputs to values from OIDC tokens automatically, making it easy to run sensitive queries without potentially leaking data
+- [Authorized Invocations](https://mcp-toolbox.dev/documentation/configuration/tools/): Restrict access to use a tool based on the users Auth token
+- [OpenTelemetry](https://mcp-toolbox.dev/documentation/monitoring/telemetry/): Get metrics and tracing from MCP Toolbox with [OpenTelemetry](https://opentelemetry.io/docs/)
 
-# Community and Support
+# Community and support
 
 We encourage you to get involved with the community:
 
 - ⭐️ Head over to the [GitHub repository](https://github.com/googleapis/genai-toolbox) to get started and follow along with updates.
-- 📚 Dive into the [official documentation](https://googleapis.github.io/genai-toolbox/getting-started/introduction/) for more advanced features and configurations.
+- 📚 Dive into the [official documentation](https://mcp-toolbox.dev/documentation/introduction/) for more advanced features and configurations.
 - 💬 Join our [Discord server](https://discord.com/invite/a4XjGqtmnG) to connect with the community and ask questions.
 
 ---
 
-<Callout icon="pen-to-square" iconType="regular">
-    [Edit the source of this page on GitHub.](https://github.com/langchain-ai/docs/edit/main/src/oss/python/integrations/tools/mcp_toolbox.mdx)
+<div className="source-links">
+<Callout icon="terminal-2">
+    [Connect these docs](/use-these-docs) to your agent of choice via MCP for real-time answers.
 </Callout>
-<Tip icon="terminal" iconType="regular">
-    [Connect these docs programmatically](/use-these-docs) to Claude, VSCode, and more via MCP for real-time answers.
-</Tip>
+<Callout icon="edit">
+    [Edit this page on GitHub](https://github.com/langchain-ai/docs/edit/main/src/oss/python/integrations/tools/mcp_toolbox.mdx) or [file an issue](https://github.com/langchain-ai/docs/issues/new/choose).
+</Callout>
+</div>

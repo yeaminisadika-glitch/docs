@@ -1,12 +1,13 @@
 ---
-title: VoyageAI
+title: "VoyageAI by MongoDB integrations"
+description: "Integrate with VoyageAI by MongoDB using LangChain Python."
 ---
 
-All functionality related to VoyageAI
+All functionality related to VoyageAI by MongoDB
 
->[VoyageAI](https://www.voyageai.com/) Voyage AI builds embedding models, customized for your domain and company, for better retrieval quality.
+>[VoyageAI by MongoDB](https://www.voyageai.com/) builds embedding models, customized for your domain and company, for better retrieval quality.
 
-## Installation and Setup
+## Installation and setup
 
 Install the integration package with
 <CodeGroup>
@@ -19,12 +20,12 @@ uv add langchain-voyageai
 ```
 </CodeGroup>
 
-Get a VoyageAI API key and set it as an environment variable (`VOYAGE_API_KEY`)
+Get a VoyageAI by MongoDB API key and set it as an environment variable (`VOYAGE_API_KEY`)
 
 
-## Text Embedding Model
+## Text embedding model
 
-See a [usage example](/oss/python/integrations/text_embedding/voyageai)
+See a [usage example](/oss/python/integrations/embeddings/voyageai).
 
 ```python
 from langchain_voyageai import VoyageAIEmbeddings
@@ -33,7 +34,7 @@ from langchain_voyageai import VoyageAIEmbeddings
 
 ## Reranking
 
-See a [usage example](/oss/python/integrations/document_transformers/voyageai-reranker)
+See a [usage example](/oss/python/integrations/document_transformers/voyageai-reranker).
 
 ```python
 from langchain_voyageai import VoyageAIRerank
@@ -41,9 +42,11 @@ from langchain_voyageai import VoyageAIRerank
 
 ---
 
-<Callout icon="pen-to-square" iconType="regular">
-    [Edit the source of this page on GitHub.](https://github.com/langchain-ai/docs/edit/main/src/oss/python/integrations/providers/voyageai.mdx)
+<div className="source-links">
+<Callout icon="terminal-2">
+    [Connect these docs](/use-these-docs) to your agent of choice via MCP for real-time answers.
 </Callout>
-<Tip icon="terminal" iconType="regular">
-    [Connect these docs programmatically](/use-these-docs) to Claude, VSCode, and more via MCP for real-time answers.
-</Tip>
+<Callout icon="edit">
+    [Edit this page on GitHub](https://github.com/langchain-ai/docs/edit/main/src/oss/python/integrations/providers/voyageai.mdx) or [file an issue](https://github.com/langchain-ai/docs/issues/new/choose).
+</Callout>
+</div>

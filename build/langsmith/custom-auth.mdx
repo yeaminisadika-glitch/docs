@@ -111,7 +111,7 @@ To leverage custom authentication and access user-level metadata in your deploym
       const threads = await remoteGraph.invoke(...);
       ```
         </Tab>
-        <Tab title="CURL">
+        <Tab title="cURL">
       ```bash
       curl -H "Authorization: Bearer ${your-token}" http://localhost:2024/threads
       ```
@@ -140,7 +140,7 @@ Fetch user credentials from a secure secret store. Storing secrets in graph stat
 
 ### Authorizing a user for Studio
 
-By default, if you add custom authorization on your resources, this will also apply to interactions made from [Studio](/langsmith/studio). If you want, you can handle logged-in Studio users differently by checking [is_studio_user()](https://langchain-ai.github.io/langgraph/cloud/reference/sdk/python_sdk_ref/#langgraph_sdk.auth.types.StudioUser).
+By default, if you add custom authorization on your resources, this will also apply to interactions made from [Studio](/langsmith/studio). If you want, you can handle logged-in Studio users differently by checking [is_studio_user()](https://reference.langchain.com/python/langgraph-sdk/auth/types/StudioUser).
 
 <Note>
 `is_studio_user` was added in version 0.1.73 of the langgraph-sdk. If you're on an older version, you can still check whether `isinstance(ctx.user, StudioUser)`.
@@ -175,9 +175,11 @@ Only use this if you want to permit developer access to a graph deployed on the 
 
 ---
 
-<Callout icon="pen-to-square" iconType="regular">
-    [Edit the source of this page on GitHub.](https://github.com/langchain-ai/docs/edit/main/src/langsmith/custom-auth.mdx)
+<div className="source-links">
+<Callout icon="terminal-2">
+    [Connect these docs](/use-these-docs) to your agent of choice via MCP for real-time answers.
 </Callout>
-<Tip icon="terminal" iconType="regular">
-    [Connect these docs programmatically](/use-these-docs) to Claude, VSCode, and more via MCP for real-time answers.
-</Tip>
+<Callout icon="edit">
+    [Edit this page on GitHub](https://github.com/langchain-ai/docs/edit/main/src/langsmith/custom-auth.mdx) or [file an issue](https://github.com/langchain-ai/docs/issues/new/choose).
+</Callout>
+</div>

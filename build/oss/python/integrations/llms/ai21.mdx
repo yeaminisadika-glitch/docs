@@ -1,11 +1,15 @@
 ---
-title: AI21LLM
+title: AI21LLM integration
+description: Integrate with the AI21LLM using LangChain Python.
+integration:
+  name: AI21LLM
+  pypi: langchain-ai21
 ---
 
 :::caution This service is deprecated.
-See [this page](https://python.langchain.com/docs/integrations/chat/ai21/) for the updated ChatAI21 object. :::
+See the [AI21 docs](https://docs.ai21.com/) for the updated ChatAI21 object. :::
 
-This example goes over how to use LangChain to interact with `AI21` Jurassic models. To use the Jamba model, use the [ChatAI21 object](https://python.langchain.com/docs/integrations/chat/ai21/) instead.
+This example goes over how to use LangChain to interact with `AI21` Jurassic models. To use the Jamba model, use the [ChatAI21 object](https://docs.ai21.com/) instead.
 
 [See a full list of AI21 models and tools on LangChain.](https://pypi.org/project/langchain-ai21/)
 
@@ -15,7 +19,7 @@ This example goes over how to use LangChain to interact with `AI21` Jurassic mod
 !pip install -qU langchain-ai21
 ```
 
-## Environment Setup
+## Environment setup
 
 We'll need to get a [AI21 API key](https://docs.ai21.com/) and set the `AI21_API_KEY` environment variable:
 
@@ -46,11 +50,11 @@ chain = prompt | model
 chain.invoke({"question": "What is LangChain?"})
 ```
 
-```output
+```text
 '\nLangChain is a (database)\nLangChain is a database for storing and processing documents'
 ```
 
-# AI21 Contextual Answer
+# AI21 contextual answer
 
 You can use AI21's contextual answers model to receives text or document, serving as a context,
 and a question and returns an answer based entirely on this context.
@@ -82,9 +86,11 @@ response = chain.invoke(
 
 ---
 
-<Callout icon="pen-to-square" iconType="regular">
-    [Edit the source of this page on GitHub.](https://github.com/langchain-ai/docs/edit/main/src/oss/python/integrations/llms/ai21.mdx)
+<div className="source-links">
+<Callout icon="terminal-2">
+    [Connect these docs](/use-these-docs) to your agent of choice via MCP for real-time answers.
 </Callout>
-<Tip icon="terminal" iconType="regular">
-    [Connect these docs programmatically](/use-these-docs) to Claude, VSCode, and more via MCP for real-time answers.
-</Tip>
+<Callout icon="edit">
+    [Edit this page on GitHub](https://github.com/langchain-ai/docs/edit/main/src/oss/python/integrations/llms/ai21.mdx) or [file an issue](https://github.com/langchain-ai/docs/issues/new/choose).
+</Callout>
+</div>

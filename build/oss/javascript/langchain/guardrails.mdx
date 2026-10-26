@@ -47,7 +47,7 @@ The PII middleware supports multiple strategies for handling detected PII:
 
 | Strategy | Description | Example |
 |----------|-------------|---------|
-| `redact` | Replace with `[REDACTED_TYPE]` | `[REDACTED_EMAIL]` |
+| `redact` | Replace with `[REDACTED_{PII_TYPE}]` | `[REDACTED_EMAIL]` |
 | `mask` | Partially obscure (e.g., last 4 digits) | `****-****-****-1234` |
 | `hash` | Replace with deterministic hash | `a8f5f167...` |
 | `block` | Raise exception when detected | Error thrown |
@@ -55,27 +55,24 @@ The PII middleware supports multiple strategies for handling detected PII:
 
 
 ```typescript
-import { createAgent, piiRedactionMiddleware } from "langchain";
+import { createAgent, piiMiddleware } from "langchain";
 
 const agent = createAgent({
-  model: "gpt-4o",
+  model: "gpt-5.5",
   tools: [customerServiceTool, emailTool],
   middleware: [
     // Redact emails in user input before sending to model
-    piiRedactionMiddleware({
-      piiType: "email",
+    piiMiddleware("email", {
       strategy: "redact",
       applyToInput: true,
     }),
     // Mask credit cards in user input
-    piiRedactionMiddleware({
-      piiType: "credit_card",
+    piiMiddleware("credit_card", {
       strategy: "mask",
       applyToInput: true,
     }),
     // Block API keys - raise error if detected
-    piiRedactionMiddleware({
-      piiType: "api_key",
+    piiMiddleware("api_key", {
       detector: /sk-[a-zA-Z0-9]{32}/,
       strategy: "block",
       applyToInput: true,
@@ -133,7 +130,7 @@ import { createAgent, humanInTheLoopMiddleware } from "langchain";
 import { MemorySaver, Command } from "@langchain/langgraph";
 
 const agent = createAgent({
-  model: "gpt-4o",
+  model: "gpt-5.5",
   tools: [searchTool, sendEmailTool, deleteDatabaseTool],
   middleware: [
     humanInTheLoopMiddleware({
@@ -227,7 +224,7 @@ const contentFilterMiddleware = (bannedKeywords: string[]) => {
 import { createAgent } from "langchain";
 
 const agent = createAgent({
-  model: "gpt-4o",
+  model: "gpt-5.5",
   tools: [searchTool, calculatorTool],
   middleware: [
     contentFilterMiddleware(["hack", "exploit", "malware"]),
@@ -251,7 +248,7 @@ Use "after agent" hooks to validate final outputs once before returning to the u
 import { createMiddleware, AIMessage, initChatModel } from "langchain";
 
 const safetyGuardrailMiddleware = () => {
-  const safetyModel = initChatModel("gpt-4o-mini");
+  const safetyModel = initChatModel("gpt-5.4-mini");
 
   return createMiddleware({
     name: "SafetyGuardrailMiddleware",
@@ -299,7 +296,7 @@ const safetyGuardrailMiddleware = () => {
 import { createAgent } from "langchain";
 
 const agent = createAgent({
-  model: "gpt-4o",
+  model: "gpt-5.5",
   tools: [searchTool, calculatorTool],
   middleware: [safetyGuardrailMiddleware()],
 });
@@ -317,23 +314,21 @@ You can stack multiple guardrails by adding them to the middleware array. They e
 
 
 ```typescript
-import { createAgent, piiRedactionMiddleware, humanInTheLoopMiddleware } from "langchain";
+import { createAgent, piiMiddleware, humanInTheLoopMiddleware } from "langchain";
 
 const agent = createAgent({
-  model: "gpt-4o",
+  model: "gpt-5.5",
   tools: [searchTool, sendEmailTool],
   middleware: [
     // Layer 1: Deterministic input filter (before agent)
     contentFilterMiddleware(["hack", "exploit"]),
 
     // Layer 2: PII protection (before and after model)
-    piiRedactionMiddleware({
-      piiType: "email",
+    piiMiddleware("email", {
       strategy: "redact",
       applyToInput: true,
     }),
-    piiRedactionMiddleware({
-      piiType: "email",
+    piiMiddleware("email", {
       strategy: "redact",
       applyToOutput: true,
     }),
@@ -357,13 +352,15 @@ const agent = createAgent({
 - [Middleware documentation](/oss/javascript/langchain/middleware) - Complete guide to custom middleware
 - [Middleware API reference](https://reference.langchain.com/python/langchain/middleware/) - Complete guide to custom middleware
 - [Human-in-the-loop](/oss/javascript/langchain/human-in-the-loop) - Add human review for sensitive operations
-- [Testing agents](/oss/javascript/langchain/test) - Strategies for testing safety mechanisms
+- [Testing agents](/oss/javascript/langchain/test/) - Strategies for testing safety mechanisms
 
 ---
 
-<Callout icon="pen-to-square" iconType="regular">
-    [Edit the source of this page on GitHub.](https://github.com/langchain-ai/docs/edit/main/src/oss/langchain/guardrails.mdx)
+<div className="source-links">
+<Callout icon="terminal-2">
+    [Connect these docs](/use-these-docs) to your agent of choice via MCP for real-time answers.
 </Callout>
-<Tip icon="terminal" iconType="regular">
-    [Connect these docs programmatically](/use-these-docs) to Claude, VSCode, and more via MCP for real-time answers.
-</Tip>
+<Callout icon="edit">
+    [Edit this page on GitHub](https://github.com/langchain-ai/docs/edit/main/src/oss/langchain/guardrails.mdx) or [file an issue](https://github.com/langchain-ai/docs/issues/new/choose).
+</Callout>
+</div>

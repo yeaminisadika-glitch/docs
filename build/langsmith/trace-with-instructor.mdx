@@ -3,12 +3,18 @@ title: Trace with Instructor
 sidebarTitle: Instructor (Python only)
 ---
 
+import AgentTracingPrerequisite from '/snippets/python/langsmith/agent-tracing-prerequisite.mdx';
+
 LangSmith provides a convenient integration with [Instructor](https://python.useinstructor.com/), a popular open-source library for generating structured output with LLMs.
+
+<AgentTracingPrerequisite />
 
 In order to use, you first need to set your LangSmith API key.
 
 ```shell
 export LANGSMITH_API_KEY=<your-api-key>
+export LANGSMITH_AGENT_ID="<your-agent-id>"
+export LANGSMITH_AGENT_ENVIRONMENT="production"
 # For LangSmith API keys linked to multiple workspaces, set the LANGSMITH_WORKSPACE_ID environment variable to specify which workspace to use.
 export LANGSMITH_WORKSPACE_ID=<your-workspace-id>
 ```
@@ -54,7 +60,7 @@ class UserDetail(BaseModel):
 
 
 user = client.chat.completions.create(
-    model="gpt-4o-mini",
+    model="gpt-6-luna",
     response_model=UserDetail,
     messages=[
         {"role": "user", "content": "Extract Jason is 25 years old"},
@@ -64,14 +70,14 @@ user = client.chat.completions.create(
 
 Oftentimes, you use `instructor` inside of other functions.
 You can get nested traces by using this wrapped client and decorating those functions with `@traceable`.
-Please see [this guide](./annotate-code) for more information on how to annotate your code for tracing with the `@traceable` decorator.
+Please see [Custom instrumentation](/langsmith/annotate-code) for more information on how to annotate your code for tracing with the `@traceable` decorator.
 
 ```python {highlight={2}}
 # You can customize the run name with the `name` keyword argument
 @traceable(name="Extract User Details")
 def my_function(text: str) -> UserDetail:
     return client.chat.completions.create(
-        model="gpt-4o-mini",
+        model="gpt-6-luna",
         response_model=UserDetail,
         messages=[
             {"role": "user", "content": f"Extract {text}"},
@@ -83,9 +89,11 @@ my_function("Jason is 25 years old")
 
 ---
 
-<Callout icon="pen-to-square" iconType="regular">
-    [Edit the source of this page on GitHub.](https://github.com/langchain-ai/docs/edit/main/src/langsmith/trace-with-instructor.mdx)
+<div className="source-links">
+<Callout icon="terminal-2">
+    [Connect these docs](/use-these-docs) to your agent of choice via MCP for real-time answers.
 </Callout>
-<Tip icon="terminal" iconType="regular">
-    [Connect these docs programmatically](/use-these-docs) to Claude, VSCode, and more via MCP for real-time answers.
-</Tip>
+<Callout icon="edit">
+    [Edit this page on GitHub](https://github.com/langchain-ai/docs/edit/main/src/langsmith/trace-with-instructor.mdx) or [file an issue](https://github.com/langchain-ai/docs/issues/new/choose).
+</Callout>
+</div>

@@ -12,15 +12,13 @@ Many model providers support setting credentials and other configuration options
 ## Requirements
 
 * A self-hosted LangSmith instance with the `playground` service running.
-* The provider you want to configure must support environment variables for configuration. Check the provider's Chat Model [documentation](https://python.langchain.com/docs/integrations/providers/) for more information.
+* The provider you want to configure must support environment variables for configuration. Check the provider's Chat Model [documentation](https://docs.langchain.com/oss/python/integrations/providers/overview) for more information.
 * The secrets/roles you may want to attach to the `playground` service.
-  * Note that for IRSA you may need to grant the `langsmith-playground` service account the necessary permissions to access the secrets or roles in your cloud provider.
+  * Note that for [IRSA](https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html) you may need to grant the `langsmith-playground` service account the necessary permissions to access the secrets or roles in your cloud provider.
 
 ## Configuration
 
-With the parameters from above, you can configure your LangSmith instance to use environment variables for model providers. You can do this by modifying the `langsmith_config.yaml` file for your LangSmith Helm Chart installation or the `docker-compose.yaml` file for your Docker installation.
-
-<CodeGroup>
+With the parameters from above, you can configure your LangSmith instance to use environment variables for model providers. You can do this by modifying the `langsmith_config.yaml` file for your LangSmith Helm Chart installation.
 
 ```yaml Helm
 playground:
@@ -38,22 +36,76 @@ playground:
       eks.amazonaws.com/role-arn: <your_role_arn>
 ```
 
-```yaml Docker
-# In your docker-compose.yaml file
-langchain-playground:
-  environment:
-    .. # Other environment variables
-    - OPENAI_BASE_URL=https://<my_proxy_url>
-    - OPENAI_API_KEY=<your_key> # This will be set in the .env file
+## Gemini Enterprise Agent Platform configuration
+
+You can configure Gemini Enterprise Agent Platform credentials for the playground service using either environment variables with secrets or GCP Workload Identity for GKE.
+
+### Using secrets
+
+Configure Gemini Enterprise Agent Platform credentials using Kubernetes secrets:
+
+```yaml Helm
+playground:
+  deployment:
+    extraEnv:
+      # Playground-specific secret (recommended)
+      - name: GOOGLE_VERTEX_AI_WEB_CREDENTIALS
+        valueFrom:
+          secretKeyRef:
+            name: gcp-vertexai-secret
+            key: credentials_json  # Your full service account JSON as string
+      # Standard fallback option
+      - name: GOOGLE_APPLICATION_CREDENTIALS
+        value: /secrets/gcp-key.json
+      # Optional: Set project/location if not in model config
+      - name: GOOGLE_CLOUD_PROJECT
+        value: "your-gcp-project-id"
+      - name: VERTEXAI_PROJECT_ID
+        value: "your-gcp-project-id"
+      - name: VERTEXAI_LOCATION
+        value: "us-central1"
+    extraVolumeMounts:
+      - name: gcp-secret-volume
+        mountPath: /secrets
+        readOnly: true
+    extraVolumes:
+      - name: gcp-secret-volume
+        secret:
+          secretName: gcp-key-json  # JSON file secret
+          defaultMode: 0444
+```
+
+### Using workload identity
+
+On self-hosted LangSmith running on GKE, Playground can use Workload Identity Federation and ADC instead of a service account JSON key. See [Authenticate Vertex AI with GKE workload identity](/langsmith/self-host-gke-vertex-ai-workload-identity) to configure Playground alongside Chat and Insights.
+
+## AWS IRSA (EKS)
+
+For EKS clusters, you can use AWS IRSA (IAM Roles for Service Accounts) to grant the `playground` service account access to AWS resources without storing credentials. Annotate the service account with your IAM role ARN:
+
+<CodeGroup>
+
+```yaml Helm
+playground:
+  serviceAccount:
+    create: true  # Enable if not exists
+    annotations:
+      eks.amazonaws.com/role-arn: arn:aws:iam::<account>:role/LangSmith-Playground-Role
 ```
 
 </CodeGroup>
 
+<Note>
+Ensure your AWS IAM role has the necessary permissions for the AWS resources the playground service needs to access.
+</Note>
+
 ---
 
-<Callout icon="pen-to-square" iconType="regular">
-    [Edit the source of this page on GitHub.](https://github.com/langchain-ai/docs/edit/main/src/langsmith/self-host-playground-environment-settings.mdx)
+<div className="source-links">
+<Callout icon="terminal-2">
+    [Connect these docs](/use-these-docs) to your agent of choice via MCP for real-time answers.
 </Callout>
-<Tip icon="terminal" iconType="regular">
-    [Connect these docs programmatically](/use-these-docs) to Claude, VSCode, and more via MCP for real-time answers.
-</Tip>
+<Callout icon="edit">
+    [Edit this page on GitHub](https://github.com/langchain-ai/docs/edit/main/src/langsmith/self-host-playground-environment-settings.mdx) or [file an issue](https://github.com/langchain-ai/docs/issues/new/choose).
+</Callout>
+</div>

@@ -1,12 +1,19 @@
 ---
-title: Memgraph
+title: Memgraph integration
+description: Integrate with the Memgraph using LangChain Python.
+integration:
+  name: Memgraph
+  pypi: langchain-memgraph
 ---
+
+
+import LangchainExperimentalUnmaintained from '/snippets/python/oss/langchain-experimental-unmaintained.mdx';
 
 Memgraph is an open-source graph database, tuned for dynamic analytics environments and compatible with Neo4j. To query the database, Memgraph uses Cypher - the most widely adopted, fully-specified, and open query language for property graph databases.
 
 This notebook will show you how to [query Memgraph with natural language](#natural-language-querying) and how to [construct a knowledge graph](#constructing-knowledge-graph) from your unstructured data.
 
-But first, make sure to [set everything up](#setting-up).
+First, make sure to [set everything up](#setting-up).
 
 ## Setting up
 
@@ -93,7 +100,7 @@ query = """
 graph.query(query)
 ```
 
-```output
+```text
 []
 ```
 
@@ -113,7 +120,7 @@ To familiarize yourself with the data and verify the updated graph schema, you c
 print(graph.get_schema)
 ```
 
-```output
+```text
 Node labels and properties (name and type) are:
 - labels: (:Platform)
   properties:
@@ -136,7 +143,7 @@ Nodes are connected with the following relationships:
 
 ### Querying the database
 
-To interact with the OpenAI API, you must configure your API key as an environment variable. This ensures proper authorization for your requests. You can find more information on obtaining your API key [here](https://help.openai.com/en/articles/4936850-where-do-i-find-my-secret-api-key). To configure the API key, you can use Python [os](https://docs.python.org/3/library/os.html) package:
+To interact with the OpenAI API, you must configure your API key as an environment variable. This ensures proper authorization for your requests. You can find more information on obtaining your API key [in the OpenAI help center](https://help.openai.com/en/articles/4936850-where-do-i-find-my-secret-api-key). To configure the API key, you can use Python [os](https://docs.python.org/3/library/os.html) package:
 
 ```
 os.environ["OPENAI_API_KEY"] = "your-key-here"
@@ -148,9 +155,8 @@ Next, create `MemgraphQAChain`, which will be utilized in the question-answering
 
 ```python
 chain = MemgraphQAChain.from_llm(
-    ChatOpenAI(temperature=0),
+    ChatOpenAI(temperature=0, model="gpt-4o"),
     graph=graph,
-    model_name="gpt-4-turbo",
     allow_dangerous_requests=True,
 )
 ```
@@ -162,7 +168,7 @@ response = chain.invoke("Which platforms is Baldur's Gate 3 available on?")
 print(response["result"])
 ```
 
-```output
+```text
 MATCH (:Game{name: "Baldur's Gate 3"})-[:AVAILABLE_ON]->(platform:Platform)
 RETURN platform.name
 Baldur's Gate 3 is available on PlayStation 5, Mac OS, Windows, and Xbox Series X/S.
@@ -173,7 +179,7 @@ response = chain.invoke("Is Baldur's Gate 3 available on Windows?")
 print(response["result"])
 ```
 
-```output
+```text
 MATCH (:Game{name: "Baldur's Gate 3"})-[:AVAILABLE_ON]->(:Platform{name: "Windows"})
 RETURN "Yes"
 Yes, Baldur's Gate 3 is available on Windows.
@@ -190,18 +196,17 @@ The `return_direct` modifier specifies whether to return the direct results of t
 ```python
 # Return the result of querying the graph directly
 chain = MemgraphQAChain.from_llm(
-    ChatOpenAI(temperature=0),
+    ChatOpenAI(temperature=0, model="gpt-4o"),
     graph=graph,
     return_direct=True,
     allow_dangerous_requests=True,
-    model_name="gpt-4-turbo",
 )
 
 response = chain.invoke("Which studio published Baldur's Gate 3?")
 print(response["result"])
 ```
 
-```output
+```text
 MATCH (g:Game {name: "Baldur's Gate 3"})-[:PUBLISHED_BY]->(p:Publisher)
 RETURN p.name
 [{'p.name': 'Larian Studios'}]
@@ -214,11 +219,10 @@ The `return_intermediate_steps` chain modifier enhances the returned response by
 ```python
 # Return all the intermediate steps of query execution
 chain = MemgraphQAChain.from_llm(
-    ChatOpenAI(temperature=0),
+    ChatOpenAI(temperature=0, model="gpt-4o"),
     graph=graph,
     allow_dangerous_requests=True,
     return_intermediate_steps=True,
-    model_name="gpt-4-turbo",
 )
 
 response = chain.invoke("Is Baldur's Gate 3 an Adventure game?")
@@ -226,7 +230,7 @@ print(f"Intermediate steps: {response['intermediate_steps']}")
 print(f"Final response: {response['result']}")
 ```
 
-```output
+```text
 MATCH (:Game {name: "Baldur's Gate 3"})-[:HAS_GENRE]->(:Genre {name: "Adventure"})
 RETURN "Yes"
 Intermediate steps: [{'query': 'MATCH (:Game {name: "Baldur\'s Gate 3"})-[:HAS_GENRE]->(:Genre {name: "Adventure"})\nRETURN "Yes"'}, {'context': [{'"Yes"': 'Yes'}]}]
@@ -240,18 +244,17 @@ The `top_k` modifier can be used when you want to restrict the maximum number of
 ```python
 # Limit the maximum number of results returned by query
 chain = MemgraphQAChain.from_llm(
-    ChatOpenAI(temperature=0),
+    ChatOpenAI(temperature=0, model="gpt-4o"),
     graph=graph,
     top_k=2,
     allow_dangerous_requests=True,
-    model_name="gpt-4-turbo",
 )
 
 response = chain.invoke("What genres are associated with Baldur's Gate 3?")
 print(response["result"])
 ```
 
-```output
+```text
 MATCH (:Game {name: "Baldur's Gate 3"})-[:HAS_GENRE]->(g:Genre)
 RETURN g.name;
 Adventure, Role-Playing Game
@@ -265,9 +268,8 @@ Let's instantiate our chain once again and attempt to ask some questions that us
 
 ```python
 chain = MemgraphQAChain.from_llm(
-    ChatOpenAI(temperature=0),
+    ChatOpenAI(temperature=0, model="gpt-4o"),
     graph=graph,
-    model_name="gpt-4-turbo",
     allow_dangerous_requests=True,
 )
 
@@ -275,7 +277,7 @@ response = chain.invoke("Is Baldur's Gate 3 available on PS5?")
 print(response["result"])
 ```
 
-```output
+```text
 MATCH (:Game{name: "Baldur's Gate 3"})-[:AVAILABLE_ON]->(:Platform{name: "PS5"})
 RETURN "Yes"
 I don't know the answer.
@@ -320,10 +322,9 @@ MEMGRAPH_GENERATION_PROMPT = PromptTemplate(
 )
 
 chain = MemgraphQAChain.from_llm(
-    ChatOpenAI(temperature=0),
+    ChatOpenAI(temperature=0, model="gpt-4o"),
     cypher_prompt=MEMGRAPH_GENERATION_PROMPT,
     graph=graph,
-    model_name="gpt-4-turbo",
     allow_dangerous_requests=True,
 )
 
@@ -331,7 +332,7 @@ response = chain.invoke("Is Baldur's Gate 3 available on PS5?")
 print(response["result"])
 ```
 
-```output
+```text
 MATCH (:Game{name: "Baldur's Gate 3"})-[:AVAILABLE_ON]->(:Platform{name: "PlayStation 5"})
 RETURN "Yes"
 Yes, Baldur's Gate 3 is available on PS5.
@@ -352,11 +353,13 @@ The steps of constructing a knowledge graph from the text are:
 
 ### Extracting structured information from text
 
-Besides all the imports in the [setup section](#setting-up), import `LLMGraphTransformer` and [`Document`](https://reference.langchain.com/python/langchain_core/documents/#langchain_core.documents.base.Document) which will be used to extract structured information from text.
+Besides all the imports in the [setup section](#setting-up), import `LLMGraphTransformer` and [`Document`](https://reference.langchain.com/python/langchain-core/documents/base/Document) which will be used to extract structured information from text.
+
+<LangchainExperimentalUnmaintained />
 
 ```python
 from langchain_core.documents import Document
-from langchain_experimental.graph_transformers import LLMGraphTransformer
+from langchain_neo4j import LLMGraphTransformer
 ```
 
 Below is an example text about Charles Darwin ([source](https://en.wikipedia.org/wiki/Charles_Darwin)) from which knowledge graph will be constructed.
@@ -379,7 +382,7 @@ text = """
 The next step is to initialize `LLMGraphTransformer` from the desired LLM and convert the document to the graph structure.
 
 ```python
-llm = ChatOpenAI(temperature=0, model_name="gpt-4-turbo")
+llm = ChatOpenAI(temperature=0, model="gpt-4o")
 llm_transformer = LLMGraphTransformer(llm=llm)
 documents = [Document(page_content=text)]
 graph_documents = llm_transformer.convert_to_graph_documents(documents)
@@ -391,11 +394,11 @@ Under the hood, LLM extracts important entities from the text and returns them a
 print(graph_documents)
 ```
 
-```output
+```text
 [GraphDocument(nodes=[Node(id='Charles Robert Darwin', type='Person', properties={}), Node(id='English', type='Nationality', properties={}), Node(id='Naturalist', type='Profession', properties={}), Node(id='Geologist', type='Profession', properties={}), Node(id='Biologist', type='Profession', properties={}), Node(id='Evolutionary Biology', type='Field', properties={}), Node(id='Common Ancestor', type='Concept', properties={}), Node(id='Scientific Concept', type='Concept', properties={}), Node(id='Alfred Russel Wallace', type='Person', properties={}), Node(id='Natural Selection', type='Concept', properties={}), Node(id='Selective Breeding', type='Concept', properties={}), Node(id='Westminster Abbey', type='Location', properties={})], relationships=[Relationship(source=Node(id='Charles Robert Darwin', type='Person', properties={}), target=Node(id='English', type='Nationality', properties={}), type='NATIONALITY', properties={}), Relationship(source=Node(id='Charles Robert Darwin', type='Person', properties={}), target=Node(id='Naturalist', type='Profession', properties={}), type='PROFESSION', properties={}), Relationship(source=Node(id='Charles Robert Darwin', type='Person', properties={}), target=Node(id='Geologist', type='Profession', properties={}), type='PROFESSION', properties={}), Relationship(source=Node(id='Charles Robert Darwin', type='Person', properties={}), target=Node(id='Biologist', type='Profession', properties={}), type='PROFESSION', properties={}), Relationship(source=Node(id='Charles Robert Darwin', type='Person', properties={}), target=Node(id='Evolutionary Biology', type='Field', properties={}), type='CONTRIBUTION', properties={}), Relationship(source=Node(id='Common Ancestor', type='Concept', properties={}), target=Node(id='Scientific Concept', type='Concept', properties={}), type='BASIS', properties={}), Relationship(source=Node(id='Charles Robert Darwin', type='Person', properties={}), target=Node(id='Alfred Russel Wallace', type='Person', properties={}), type='COLLABORATION', properties={}), Relationship(source=Node(id='Natural Selection', type='Concept', properties={}), target=Node(id='Selective Breeding', type='Concept', properties={}), type='COMPARISON', properties={}), Relationship(source=Node(id='Charles Robert Darwin', type='Person', properties={}), target=Node(id='Westminster Abbey', type='Location', properties={}), type='BURIAL', properties={})], source=Document(metadata={}, page_content='\n    Charles Robert Darwin was an English naturalist, geologist, and biologist,\n    widely known for his contributions to evolutionary biology. His proposition that\n    all species of life have descended from a common ancestor is now generally\n    accepted and considered a fundamental scientific concept. In a joint\n    publication with Alfred Russel Wallace, he introduced his scientific theory that\n    this branching pattern of evolution resulted from a process he called natural\n    selection, in which the struggle for existence has a similar effect to the\n    artificial selection involved in selective breeding. Darwin has been\n    described as one of the most influential figures in human history and was\n    honoured by burial in Westminster Abbey.\n'))]
 ```
 
-### Storing into Memgraph
+### Storing into memgraph
 
 Once you have the data ready in a format of `GraphDocument`, that is, nodes and relationships, you can use `add_graph_documents` method to import it into Memgraph. That method transforms the list of `graph_documents` into appropriate Cypher queries that need to be executed in Memgraph. Once that's done, a knowledge graph is stored in Memgraph.
 
@@ -431,7 +434,7 @@ print(f"Nodes:{graph_documents_filtered[0].nodes}")
 print(f"Relationships:{graph_documents_filtered[0].relationships}")
 ```
 
-```output
+```text
 Nodes:[Node(id='Charles Robert Darwin', type='Person', properties={}), Node(id='English', type='Nationality', properties={}), Node(id='Evolutionary Biology', type='Concept', properties={}), Node(id='Natural Selection', type='Concept', properties={}), Node(id='Alfred Russel Wallace', type='Person', properties={})]
 Relationships:[Relationship(source=Node(id='Charles Robert Darwin', type='Person', properties={}), target=Node(id='English', type='Nationality', properties={}), type='NATIONALITY', properties={}), Relationship(source=Node(id='Charles Robert Darwin', type='Person', properties={}), target=Node(id='Evolutionary Biology', type='Concept', properties={}), type='INVOLVED_IN', properties={}), Relationship(source=Node(id='Charles Robert Darwin', type='Person', properties={}), target=Node(id='Natural Selection', type='Concept', properties={}), type='INVOLVED_IN', properties={}), Relationship(source=Node(id='Charles Robert Darwin', type='Person', properties={}), target=Node(id='Alfred Russel Wallace', type='Person', properties={}), type='COLLABORATES_WITH', properties={})]
 ```
@@ -467,15 +470,14 @@ In the end, you can query the knowledge graph, as explained in the section befor
 
 ```python
 chain = MemgraphQAChain.from_llm(
-    ChatOpenAI(temperature=0),
+    ChatOpenAI(temperature=0, model="gpt-4o"),
     graph=graph,
-    model_name="gpt-4-turbo",
     allow_dangerous_requests=True,
 )
 print(chain.invoke("Who Charles Robert Darwin collaborated with?")["result"])
 ```
 
-```output
+```text
 MATCH (:Person {id: "Charles Robert Darwin"})-[:COLLABORATION]->(collaborator)
 RETURN collaborator;
 Alfred Russel Wallace
@@ -483,9 +485,11 @@ Alfred Russel Wallace
 
 ---
 
-<Callout icon="pen-to-square" iconType="regular">
-    [Edit the source of this page on GitHub.](https://github.com/langchain-ai/docs/edit/main/src/oss/python/integrations/graphs/memgraph.mdx)
+<div className="source-links">
+<Callout icon="terminal-2">
+    [Connect these docs](/use-these-docs) to your agent of choice via MCP for real-time answers.
 </Callout>
-<Tip icon="terminal" iconType="regular">
-    [Connect these docs programmatically](/use-these-docs) to Claude, VSCode, and more via MCP for real-time answers.
-</Tip>
+<Callout icon="edit">
+    [Edit this page on GitHub](https://github.com/langchain-ai/docs/edit/main/src/oss/python/integrations/graphs/memgraph.mdx) or [file an issue](https://github.com/langchain-ai/docs/issues/new/choose).
+</Callout>
+</div>

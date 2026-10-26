@@ -1,6 +1,11 @@
 ---
-title: Neo4j
+title: Neo4j integration
+description: Integrate with the Neo4j graph using LangChain Python.
+integration:
+  name: Neo4j
+  pypi: langchain-neo4j
 ---
+
 
 >[Neo4j](https://neo4j.com/docs/getting-started/) is a graph database management system developed by `Neo4j, Inc`.
 
@@ -62,7 +67,7 @@ MERGE (a)-[:ACTED_IN]->(m)
 )
 ```
 
-```output
+```text
 []
 ```
 
@@ -78,7 +83,7 @@ graph.refresh_schema()
 print(graph.schema)
 ```
 
-```output
+```text
 Node properties:
 Movie {runtime: INTEGER, name: STRING}
 Actor {name: STRING}
@@ -102,7 +107,7 @@ enhanced_graph = Neo4jGraph(
 print(enhanced_graph.schema)
 ```
 
-```output
+```text
 Node properties:
 - **Movie**
   - `runtime`: INTEGER Min: 120, Max: 120
@@ -129,7 +134,7 @@ chain = GraphCypherQAChain.from_llm(
 chain.invoke({"query": "Who played in Top Gun?"})
 ```
 
-```output
+```text
 > Entering new GraphCypherQAChain chain...
 Generated Cypher:
 MATCH (a:Actor)-[:ACTED_IN]->(m:Movie)
@@ -141,7 +146,7 @@ Full Context:
 > Finished chain.
 ```
 
-```output
+```text
 {'query': 'Who played in Top Gun?',
  'result': 'Tom Cruise, Val Kilmer, Anthony Edwards, and Meg Ryan played in Top Gun.'}
 ```
@@ -165,7 +170,7 @@ chain = GraphCypherQAChain.from_llm(
 chain.invoke({"query": "Who played in Top Gun?"})
 ```
 
-```output
+```text
 > Entering new GraphCypherQAChain chain...
 Generated Cypher:
 MATCH (a:Actor)-[:ACTED_IN]->(m:Movie)
@@ -177,7 +182,7 @@ Full Context:
 > Finished chain.
 ```
 
-```output
+```text
 {'query': 'Who played in Top Gun?',
  'result': 'Tom Cruise, Val Kilmer played in Top Gun.'}
 ```
@@ -202,7 +207,7 @@ print(f"Intermediate steps: {result['intermediate_steps']}")
 print(f"Final answer: {result['result']}")
 ```
 
-```output
+```text
 > Entering new GraphCypherQAChain chain...
 Generated Cypher:
 MATCH (a:Actor)-[:ACTED_IN]->(m:Movie)
@@ -234,7 +239,7 @@ chain = GraphCypherQAChain.from_llm(
 chain.invoke({"query": "Who played in Top Gun?"})
 ```
 
-```output
+```text
 > Entering new GraphCypherQAChain chain...
 Generated Cypher:
 MATCH (a:Actor)-[:ACTED_IN]->(m:Movie)
@@ -244,7 +249,7 @@ RETURN a.name
 > Finished chain.
 ```
 
-```output
+```text
 {'query': 'Who played in Top Gun?',
  'result': [{'a.name': 'Tom Cruise'},
   {'a.name': 'Val Kilmer'},
@@ -252,7 +257,7 @@ RETURN a.name
   {'a.name': 'Meg Ryan'}]}
 ```
 
-## Add examples in the Cypher generation prompt
+## Add examples in the cypher generation prompt
 
 You can define the Cypher statement you want the LLM to generate for particular questions
 
@@ -293,7 +298,7 @@ chain = GraphCypherQAChain.from_llm(
 chain.invoke({"query": "How many people played in Top Gun?"})
 ```
 
-```output
+```text
 > Entering new GraphCypherQAChain chain...
 Generated Cypher:
 MATCH (m:Movie {name:"Top Gun"})<-[:ACTED_IN]-()
@@ -304,20 +309,20 @@ Full Context:
 > Finished chain.
 ```
 
-```output
+```text
 {'query': 'How many people played in Top Gun?',
  'result': 'There were 4 actors in Top Gun.'}
 ```
 
-## Use separate LLMs for Cypher and answer generation
+## Use separate LLMs for cypher and answer generation
 
 You can use the `cypher_llm` and `qa_llm` parameters to define different llms
 
 ```python
 chain = GraphCypherQAChain.from_llm(
     graph=graph,
-    cypher_llm=ChatOpenAI(temperature=0, model="gpt-3.5-turbo"),
-    qa_llm=ChatOpenAI(temperature=0, model="gpt-3.5-turbo-16k"),
+    cypher_llm=ChatOpenAI(temperature=0, model="gpt-4o-mini"),
+    qa_llm=ChatOpenAI(temperature=0, model="gpt-4o-mini"),
     verbose=True,
     allow_dangerous_requests=True,
 )
@@ -327,7 +332,7 @@ chain = GraphCypherQAChain.from_llm(
 chain.invoke({"query": "Who played in Top Gun?"})
 ```
 
-```output
+```text
 > Entering new GraphCypherQAChain chain...
 Generated Cypher:
 MATCH (a:Actor)-[:ACTED_IN]->(m:Movie)
@@ -339,7 +344,7 @@ Full Context:
 > Finished chain.
 ```
 
-```output
+```text
 {'query': 'Who played in Top Gun?',
  'result': 'Tom Cruise, Val Kilmer, Anthony Edwards, and Meg Ryan played in Top Gun.'}
 ```
@@ -351,8 +356,8 @@ You can use `include_types` or `exclude_types` to ignore parts of the graph sche
 ```python
 chain = GraphCypherQAChain.from_llm(
     graph=graph,
-    cypher_llm=ChatOpenAI(temperature=0, model="gpt-3.5-turbo"),
-    qa_llm=ChatOpenAI(temperature=0, model="gpt-3.5-turbo-16k"),
+    cypher_llm=ChatOpenAI(temperature=0, model="gpt-4o-mini"),
+    qa_llm=ChatOpenAI(temperature=0, model="gpt-4o-mini"),
     verbose=True,
     exclude_types=["Movie"],
     allow_dangerous_requests=True,
@@ -364,7 +369,7 @@ chain = GraphCypherQAChain.from_llm(
 print(chain.graph_schema)
 ```
 
-```output
+```text
 Node properties are the following:
 Actor {name: STRING}
 Relationship properties are the following:
@@ -372,13 +377,13 @@ Relationship properties are the following:
 The relationships are the following:
 ```
 
-## Validate generated Cypher statements
+## Validate generated cypher statements
 
 You can use the `validate_cypher` parameter to validate and correct relationship directions in generated Cypher statements
 
 ```python
 chain = GraphCypherQAChain.from_llm(
-    llm=ChatOpenAI(temperature=0, model="gpt-3.5-turbo"),
+    llm=ChatOpenAI(temperature=0, model="gpt-4o-mini"),
     graph=graph,
     verbose=True,
     validate_cypher=True,
@@ -390,7 +395,7 @@ chain = GraphCypherQAChain.from_llm(
 chain.invoke({"query": "Who played in Top Gun?"})
 ```
 
-```output
+```text
 > Entering new GraphCypherQAChain chain...
 Generated Cypher:
 MATCH (a:Actor)-[:ACTED_IN]->(m:Movie)
@@ -402,7 +407,7 @@ Full Context:
 > Finished chain.
 ```
 
-```output
+```text
 {'query': 'Who played in Top Gun?',
  'result': 'Tom Cruise, Val Kilmer, Anthony Edwards, and Meg Ryan played in Top Gun.'}
 ```
@@ -414,7 +419,7 @@ _You will need to use an LLM with native function calling support to use this fe
 
 ```python
 chain = GraphCypherQAChain.from_llm(
-    llm=ChatOpenAI(temperature=0, model="gpt-3.5-turbo"),
+    llm=ChatOpenAI(temperature=0, model="gpt-4o-mini"),
     graph=graph,
     verbose=True,
     use_function_response=True,
@@ -423,7 +428,7 @@ chain = GraphCypherQAChain.from_llm(
 chain.invoke({"query": "Who played in Top Gun?"})
 ```
 
-```output
+```text
 > Entering new GraphCypherQAChain chain...
 Generated Cypher:
 MATCH (a:Actor)-[:ACTED_IN]->(m:Movie)
@@ -435,7 +440,7 @@ Full Context:
 > Finished chain.
 ```
 
-```output
+```text
 {'query': 'Who played in Top Gun?',
  'result': 'The main actors in Top Gun are Tom Cruise, Val Kilmer, Anthony Edwards, and Meg Ryan.'}
 ```
@@ -446,7 +451,7 @@ _Note that `qa_prompt` will have no effect when using `use_function_response`_
 
 ```python
 chain = GraphCypherQAChain.from_llm(
-    llm=ChatOpenAI(temperature=0, model="gpt-3.5-turbo"),
+    llm=ChatOpenAI(temperature=0, model="gpt-4o-mini"),
     graph=graph,
     verbose=True,
     use_function_response=True,
@@ -456,7 +461,7 @@ chain = GraphCypherQAChain.from_llm(
 chain.invoke({"query": "Who played in Top Gun?"})
 ```
 
-```output
+```text
 > Entering new GraphCypherQAChain chain...
 Generated Cypher:
 MATCH (a:Actor)-[:ACTED_IN]->(m:Movie)
@@ -468,16 +473,18 @@ Full Context:
 > Finished chain.
 ```
 
-```output
+```text
 {'query': 'Who played in Top Gun?',
  'result': "Arrr matey! In the film Top Gun, ye be seein' Tom Cruise, Val Kilmer, Anthony Edwards, and Meg Ryan sailin' the high seas of the sky! Aye, they be a fine crew of actors, they be!"}
 ```
 
 ---
 
-<Callout icon="pen-to-square" iconType="regular">
-    [Edit the source of this page on GitHub.](https://github.com/langchain-ai/docs/edit/main/src/oss/python/integrations/graphs/neo4j_cypher.mdx)
+<div className="source-links">
+<Callout icon="terminal-2">
+    [Connect these docs](/use-these-docs) to your agent of choice via MCP for real-time answers.
 </Callout>
-<Tip icon="terminal" iconType="regular">
-    [Connect these docs programmatically](/use-these-docs) to Claude, VSCode, and more via MCP for real-time answers.
-</Tip>
+<Callout icon="edit">
+    [Edit this page on GitHub](https://github.com/langchain-ai/docs/edit/main/src/oss/python/integrations/graphs/neo4j_cypher.mdx) or [file an issue](https://github.com/langchain-ai/docs/issues/new/choose).
+</Callout>
+</div>

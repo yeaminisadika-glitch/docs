@@ -1,10 +1,15 @@
 ---
-title: OpenVINO
+title: Openvino integration
+description: Integrate with the Openvino LLM using LangChain Python.
+integration:
+  name: Openvino
+  pypi: langchain-huggingface
 ---
+
 
 [OpenVINO™](https://github.com/openvinotoolkit/openvino) is an open-source toolkit for optimizing and deploying AI inference. OpenVINO™ Runtime can enable running the same model optimized across various hardware [devices](https://github.com/openvinotoolkit/openvino?tab=readme-ov-file#supported-hardware-matrix). Accelerate your deep learning performance across use cases like: language + LLMs, computer vision, automatic speech recognition, and more.
 
-OpenVINO models can be run locally through the `HuggingFacePipeline` [class](https://python.langchain.com/docs/integrations/llms/huggingface_pipeline). To deploy a model with OpenVINO, you can specify the `backend="openvino"` parameter to trigger OpenVINO as backend inference framework.
+OpenVINO models can be run locally through the `HuggingFacePipeline` [class](/oss/python/integrations/llms/huggingface_pipelines). To deploy a model with OpenVINO, you can specify the `backend="openvino"` parameter to trigger OpenVINO as backend inference framework.
 
 To use, you should have the `optimum-intel` with OpenVINO Accelerator python [package installed](https://github.com/huggingface/optimum-intel?tab=readme-ov-file#installation).
 
@@ -12,7 +17,7 @@ To use, you should have the `optimum-intel` with OpenVINO Accelerator python [pa
 pip install -U-strategy eager "optimum[openvino,nncf]" langchain-huggingface --quiet
 ```
 
-### Model Loading
+### Model loading
 
 Models can be loaded by specifying the model parameters using the `from_model_id` method.
 
@@ -50,7 +55,7 @@ ov_pipe = pipeline(
 ov_llm = HuggingFacePipeline(pipeline=ov_pipe)
 ```
 
-### Create Chain
+### Create chain
 
 With the model loaded into memory, you can compose it with a prompt to
 form a chain.
@@ -148,9 +153,11 @@ For more information refer to:
 
 ---
 
-<Callout icon="pen-to-square" iconType="regular">
-    [Edit the source of this page on GitHub.](https://github.com/langchain-ai/docs/edit/main/src/oss/python/integrations/llms/openvino.mdx)
+<div className="source-links">
+<Callout icon="terminal-2">
+    [Connect these docs](/use-these-docs) to your agent of choice via MCP for real-time answers.
 </Callout>
-<Tip icon="terminal" iconType="regular">
-    [Connect these docs programmatically](/use-these-docs) to Claude, VSCode, and more via MCP for real-time answers.
-</Tip>
+<Callout icon="edit">
+    [Edit this page on GitHub](https://github.com/langchain-ai/docs/edit/main/src/oss/python/integrations/llms/openvino.mdx) or [file an issue](https://github.com/langchain-ai/docs/issues/new/choose).
+</Callout>
+</div>
